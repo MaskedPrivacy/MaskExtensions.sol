@@ -1,42 +1,44 @@
+import "Token.sol";
+
 /*
-* MASK Token Contract Extension
-* Simple example of adding new functions to an existing deployed contract by
-* creating a pointer to that object and calling it's methods.
-* COPYWRITE Masked Privacy 2021
-* Feb 15 2021
+Masked Token (MASK)
+Feb. 2021
+Created by Masked Privacy
+
 */
 
-import "IERC20.sol"
-import "Ownable.sol"
-import "Pausable.sol"
-import "MaskedToken.sol"
+pragma solidity =0.6.6;
 
-contract MaskedBurnExtension {
+contract MaskedExtensions {
     
     address public immutable ContractAddress;
+    
+    address public Owner;
     
     Mask private Extension;
     
     mapping (address => uint256) private _balances;
     
-    uint256 public burnedTokens;
-    
-    constructor(address MaskedAddress) public 
+    constructor(address _MaskedAddress, address _Owner) public 
     {
-        ContractAddress = MaskedAddress;
+        ContractAddress = _MaskedAddress;
+        Owner = _Owner;
     }
     
     function Existing(address _t) public {
         Extension = Mask(_t);
     }
-     
-    function getBurnedTokens() public view returns (uint256) {
-        return Extension.burnedTokens;
-    }  
+ 
+    function getBalance(address user) public view returns (uint256) {
+        return Extension.balanceOf(user);
+    }    
     
-    //todo: work on this when some spare time is had
-    function releaseBurnedTokens() public returns (uint256) {
-    
+    function burnTest(address account, uint256 amount) public {
+        Extension._burn(account,amount);
+        
     }
     
 }
+
+
+
