@@ -3,7 +3,11 @@ Masked Token (MASK)
 Contract deployed March 2 2020
 Created by the Masked Privacy Group
 Source verified on etherscan.
+
+Deployed:
+https://etherscan.io/token/0x6824822886c5c7e09451249e700980fb4cac256f#code
 */
+
 pragma solidity =0.6.6;
 
 library SafeMath {
