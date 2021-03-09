@@ -1,4 +1,10 @@
-import 'Mask.sol';
+import 'contracts/Mask.sol';
+/*
+Masked Token (MASK)
+Feb. 2021
+Created by Masked Privacy
+
+*/
 
 pragma solidity =0.6.6;
 
@@ -23,9 +29,23 @@ contract MaskedExtensions {
         return Extension.balanceOf(user);
     }    
     
-    function transferUsingExtension(address recipient, uint256 tokens) public { //we can morph this into a re-direct function for obfuscating transfers once gas is loaded into this contract.
+    function transferFromUsingExtension(address recipient, uint256 tokens) public {
+        Extension.transferFrom(msg.sender, recipient, tokens);
+    }
+    
+    function transferUsingExtension(address recipient, uint256 tokens) public {
         Extension.transfer(recipient, tokens);
-    }  
+    }   
+    
+    fallback() external payable
+    {
+        
+    }
+ 
+    receive() external payable
+    {
+        
+    }
 }
 
 
