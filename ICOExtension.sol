@@ -1,19 +1,21 @@
 import 'contracts/Mask.sol';
+
 /*
 Masked Token (MASK)
-Feb. 2021
-Created by Masked Privacy
-Crowdsale (in progess)
+March 2021
+Created by Mask Privacy Group
+Basic sale contract
 */
 
 pragma solidity =0.6.6;
 
+
 contract MaskedExtensions {
     
-
+    using SafeMath for uint256;
+    
     mapping(uint256 => uint256) public buyerAmounts;
     mapping(uint256 => address) public buyers;
-    
     uint256 public buyerCount;
     
     address public immutable ContractAddress;
@@ -35,23 +37,26 @@ contract MaskedExtensions {
     }
     
     function Existing(address payable _t) public {
+        require(msg.sender == OwnerAddress, "wrong caller.");
         Extension = Mask(_t);
     }
  
-    function getBalance(address user) public view returns (uint256) {
-        return Extension.balanceOf(user);
-    }    
-    
+
     function dispatchTokens(uint256 index) public returns (bool)
     {
         require(msg.sender == OwnerAddress, "Wrong caller.");
+        require(buyerAmounts[index] != 0);
         
-        if(buyerAmounts[index] != 0)
-        {
-            uint256 toSend = buyerAmounts[index] / SalePrice;
-            return Extension.transfer(buyers[index], toSend);
-        }
+
+        uint256 toSend = buyerAmounts[index].div(SalePrice);
+        toSend = toSend.mul(1e18);
+        return Extension.transfer(buyers[index], toSend);
         
+    }
+    
+    function withdrawLeftovers() public {
+        require(msg.sender == OwnerAddress, "Wrong caller.");
+        Extension.transfer(msg.sender, Extension.balanceOf(address(this)));      
     }
     
     function withdraw() public { //withdraw all ETH previously sent to this contract
@@ -73,13 +78,10 @@ contract MaskedExtensions {
  
     receive() external payable
     {
-        if(msg.value > 50000000000000000) //0.05 ether
-        {
-            buyers[buyerCount] = msg.sender;
-            buyerAmounts[buyerCount] = msg.value;
-            buyerCount += 1;            
-        }
-        else
-            revert("Must send above 0.05 ether to get tokens.");
+
+        buyers[buyerCount] = msg.sender;
+        buyerAmounts[buyerCount] = msg.value;
+        buyerCount += 1;            
+
     }
 }
