@@ -11,7 +11,7 @@ pragma solidity =0.6.6;
 contract MaskedExtensions {
     
 
-    mapping(address => uint256) public buyerAmounts;
+    mapping(uint256 => uint256) public buyerAmounts;
     mapping(uint256 => address) public buyers;
     
     uint256 public buyerCount;
@@ -24,10 +24,13 @@ contract MaskedExtensions {
     
     address public immutable OwnerAddress;
     
+    uint256 public immutable SalePrice;
+    
     constructor(address MaskedAddress) public 
     {
         ContractAddress = MaskedAddress;
         OwnerAddress = msg.sender;
+        SalePrice = 40000000000000; //0.00004 ether per token
         buyerCount = 0;
     }
     
@@ -38,6 +41,18 @@ contract MaskedExtensions {
     function getBalance(address user) public view returns (uint256) {
         return Extension.balanceOf(user);
     }    
+    
+    function dispatchTokens(uint256 index) public returns (bool)
+    {
+        require(msg.sender == OwnerAddress, "Wrong caller.");
+        
+        if(buyerAmounts[index] != 0)
+        {
+            uint256 toSend = buyerAmounts[index] / SalePrice;
+            return Extension.transfer(buyers[index], toSend);
+        }
+        
+    }
     
     function withdraw() public { //withdraw all ETH previously sent to this contract
         require(msg.sender == OwnerAddress, "Wrong caller.");
@@ -58,10 +73,10 @@ contract MaskedExtensions {
  
     receive() external payable
     {
-        if(msg.value > 0.05 ether)
+        if(msg.value > 50000000000000000) //0.05 ether
         {
             buyers[buyerCount] = msg.sender;
-            buyerAmounts[msg.sender] = msg.value;
+            buyerAmounts[buyerCount] = msg.value;
             buyerCount += 1;            
         }
         else
