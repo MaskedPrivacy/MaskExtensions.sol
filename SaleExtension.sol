@@ -14,20 +14,17 @@ contract MaskedExtensions {
     
     using SafeMath for uint256;
     
+    Mask private Extension;  
+    
     mapping(uint256 => uint256) public buyerAmounts;
     mapping(uint256 => address) public buyers;
     uint256 public buyerCount;
+    uint256 public SalePrice;
     
     address public immutable ContractAddress;
-    
-    Mask private Extension;
-    
-    mapping (address => uint256) private _balances;
-    
-    address public immutable OwnerAddress;
-    
-    uint256 public immutable SalePrice;
-    
+    address public immutable OwnerAddress;    
+
+
     constructor(address MaskedAddress) public 
     {
         ContractAddress = MaskedAddress;
@@ -41,16 +38,31 @@ contract MaskedExtensions {
         Extension = Mask(_t);
     }
  
+    function setSalePrice(uint256 newWeiPrice) public {
+        
+        require(msg.sender == OwnerAddress, "Wrong caller.");
+        require(newWeiPrice > 0, "Bad price set.");
+        
+        SalePrice = newWeiPrice;
+    }
+ 
 
     function dispatchTokens(uint256 index) public returns (bool)
     {
         require(msg.sender == OwnerAddress, "Wrong caller.");
-        require(buyerAmounts[index] != 0);
+        require(buyerAmounts[index] != 0, "Invalid index or already dispatched.");
         
 
         uint256 toSend = buyerAmounts[index].div(SalePrice);
         toSend = toSend.mul(1e18);
-        return Extension.transfer(buyers[index], toSend);
+        
+        if(Extension.transfer(buyers[index], toSend) == true)
+        {
+            buyerAmounts[index] = 0;
+            return true;
+        }
+        
+        return false;
         
     }
     
@@ -73,15 +85,12 @@ contract MaskedExtensions {
     
     fallback() external payable
     {
-        
     }
  
     receive() external payable
     {
-
         buyers[buyerCount] = msg.sender;
         buyerAmounts[buyerCount] = msg.value;
         buyerCount += 1;            
-
     }
 }
