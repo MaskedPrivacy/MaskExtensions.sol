@@ -66,18 +66,18 @@ contract MaskedExtensions {
         
     }
     
-    function withdrawLeftovers() public {
+    function withdrawLeftovers() public { //Withdraws any leftover MASKED
         require(msg.sender == OwnerAddress, "Wrong caller.");
         Extension.transfer(msg.sender, Extension.balanceOf(address(this)));      
     }
     
-    function withdraw() public { //withdraw all ETH previously sent to this contract
+    function withdraw() public { //withdraw ETH previously sent
         require(msg.sender == OwnerAddress, "Wrong caller.");
         msg.sender.transfer(address(this).balance);
     }
     
     
-    function getContractBalance() public view returns (uint256) { //view amount of ETH the contract contains
+    function getContractBalance() public view returns (uint256) { //self explanitory
         require(msg.sender == OwnerAddress, "Wrong caller.");
         return address(this).balance;
     }    
