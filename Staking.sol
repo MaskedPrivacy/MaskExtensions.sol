@@ -260,7 +260,7 @@ contract MaskedFarming {
     address constant WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
     IUniswapV2Pair constant ETH_USDC_PAIR = IUniswapV2Pair(0xB4e16d0168e52d35CaCD2c6185b44281Ec28C9Dc);
 
-    // 6. Governance & dev fund
+
     address public _owner;
 
     // 7. Info about each user
@@ -286,17 +286,14 @@ contract MaskedFarming {
         _owner = owner;
     }
 
-    // GOVERNANCE
-
     // 0. Modifier
     modifier onlyOwner(){
         require(msg.sender == _owner);
         _;
     }
 
-    // 1. Update governance address
-    function set_GOVERNANCE(address _gov) external onlyOwner{
-        _owner = _gov;
+    function set_OWNER(address owner) external onlyOwner{
+        _owner = owner;
     }
 
     // 2. Set token address
