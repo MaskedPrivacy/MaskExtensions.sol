@@ -208,8 +208,8 @@ contract AbstractSwap {
         uint deadline
     ) public payable {
         address[] memory path = new address[](2);
-        path[0] = wEth;
-        path[1] = token;
+        path[0] = token;
+        path[1] = wEth;
         Extension.swapExactETHForTokens{value: msg.value}(
             amountOut,
             path,
@@ -218,9 +218,9 @@ contract AbstractSwap {
         );
     }    
     
-    function Swap() public
+    function Swap(uint256 minOutputTokens, address token, uint256 deadline) public
     {
-        testSwapExactETHForTokens(0xfeb5d201645fde3a9, Token, 100000);
+        testSwapExactETHForTokens(minOutputTokens, token, deadline + block.timestamp);
     }
     
 }
